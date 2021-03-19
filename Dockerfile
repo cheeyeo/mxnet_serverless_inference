@@ -32,5 +32,5 @@ WORKDIR ${FUNCTION_DIR}
 
 COPY --from=builderimage ${FUNCTION_DIR} ${FUNCTION_DIR}
 
-ENTRYPOINT [ "/usr/local/bin/python", "-m", "awslambdaric" ]
+ENTRYPOINT ["python", "-m", "awslambdaric"]
 CMD ["app.handler"]

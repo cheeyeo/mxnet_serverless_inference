@@ -8,19 +8,30 @@ import sys
 import uuid
 import json
 from datetime import datetime
+import os
 
 s3 = boto3.resource("s3")
 
+# Output bucket
+output_bucket = os.environ.get("OUTPUT_BUCKET")
+
+# Download resource from resource bucket
+resource_bucket = os.environ.get("RESOURCE_BUCKET")
+
 # Lambda has no GPU support 
-model_ctx = mx.cpu()
-output_bucket = "mxnet-lambda-output"
 label_classes = "synset.txt"
-params = "resnet50_v2.params"
+model_params = "resnet50_v2.params"
+label_file = "/tmp/{}".format(label_classes)
+model_file = "/tmp/{}".format(model_params)
+s3.Bucket(resource_bucket).download_file(label_classes, label_file)
+s3.Bucket(resource_bucket).download_file(model_params, model_file)
+
+model_ctx = mx.cpu()
 net = models.resnet50_v2(pretrained=False)
-net.load_parameters(params, ctx=model_ctx)
+net.load_parameters(model_file, ctx=model_ctx)
 net.hybridize()
 
-with open(label_classes, "r") as f:
+with open(label_file, "r") as f:
     labels = [' '.join(l.split()[1:]) for l in f]
 
 def transform_image(img_path):
@@ -54,7 +65,6 @@ def handler(event, context):
         # transform data and perform inference
         data = transform_image(img_path)
         predict = net(data)
-        print("Prediction: ", predict)
         idx = predict.topk(k=1)[0]
         idx = int(idx.asscalar())
         os.remove(img_path)
@@ -62,6 +72,7 @@ def handler(event, context):
         time = datetime.now().strftime("%d%m%Y-%H:%M:%S")
         file_name = "{}_{}.txt".format(key, time)
         content = labels[idx]
+        print("Predicted Content: {}".format(content))
         s3.Object(output_bucket, file_name).put(Body=content)
 
     return {

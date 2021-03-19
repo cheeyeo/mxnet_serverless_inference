@@ -82,10 +82,16 @@ resource "aws_lambda_function" "mxnet_infer_lambda" {
   memory_size   = var.lambda_memory_size
   timeout       = var.lambda_timeout
   package_type  = "Image"
+  environment {
+    variables = {
+      OUTPUT_BUCKET   = aws_s3_bucket.output_bucket.id
+      RESOURCE_BUCKET = aws_s3_bucket.resource_bucket.id
+    }
+  }
 }
 
 # Add events to lambda to listen for changes in input bucket...
-
+# This is added under Events for the S3 bucket and not via event bus...
 resource "aws_lambda_permission" "allow_bucket" {
   statement_id  = "AllowExecutionFromS3Bucket"
   action        = "lambda:InvokeFunction"
