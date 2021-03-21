@@ -23,7 +23,7 @@ RUN pip install \
     graphviz==0.8.4 \
     requests==2.24.0
 
-
+# Note: replace with your own mxnet image or install the mxnet lib...
 FROM m1l0/mxnet:v1.8.x-py3.6-cpu
 
 ARG FUNCTION_DIR

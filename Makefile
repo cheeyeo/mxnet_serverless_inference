@@ -6,9 +6,19 @@ INPUT_BUCKET = $(shell terraform -chdir=terraform output -raw input_bucket)
 
 AWS_PROFILE = $(shell terraform -chdir=terraform output -raw aws_profile)
 
+.PHONY: setup
+setup
+  terraform -chdir=terraform init
+  terraform -chdir=terraform apply
+
+
 .PHONY: upload-resource
 upload-resource:
 	aws --profile $(AWS_PROFILE) s3 cp resources/ s3://$(RESOURCE_BUCKET)/ --recursive
+
+.PHONY: predictions
+predictions:
+	aws --profile $(AWS_PROFILE) s3 cp examples/ s3://$(INPUT_BUCKET)/ --recursive
 
 .PHONY: download-output
 download-output:
