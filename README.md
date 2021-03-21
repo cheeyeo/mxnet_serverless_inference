@@ -1,6 +1,9 @@
 ## MXNet Serverless example
 
-Running MXNet container on lambda to create a streaming inference pipeline...
+Running MXNet container on lambda to create a streaming inference pipeline.
+
+This is based on the following article:
+https://medium.com/apache-mxnet/streaming-inference-pipeline-deploying-mxnet-model-on-aws-lambda-7ce6bc8f4cc8
 
 
 ### Running
@@ -45,3 +48,6 @@ The final image needs to be pushed to ECR as within the lambda console you can o
 Left as exercise to reader:
 
 https://github.com/aws/aws-lambda-runtime-interface-emulator
+
+## License
+Licensed under an MIT license.
