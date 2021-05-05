@@ -8,7 +8,7 @@ import sys
 import uuid
 import json
 from datetime import datetime
-import os
+
 
 s3 = boto3.resource("s3")
 

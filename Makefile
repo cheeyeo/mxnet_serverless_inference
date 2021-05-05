@@ -7,7 +7,7 @@ INPUT_BUCKET = $(shell terraform -chdir=terraform output -raw input_bucket)
 AWS_PROFILE = $(shell terraform -chdir=terraform output -raw aws_profile)
 
 .PHONY: setup
-setup
+setup:
   terraform -chdir=terraform init
   terraform -chdir=terraform apply
 
